@@ -1,9 +1,5 @@
 'use strict';
 
-// Data needed for a later exercise
-const flights =
-    '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
-
 // Data needed for first part of the section
 
 const openingHours = {
@@ -50,14 +46,14 @@ const restaurant = {
     },
 };
 
-restaurant.orderDelivery({
-    time: '22:30',
-    address: 'Vidin, 21',
-    mainIndex: 2,
-    starterIndex: 1,
-});
+// restaurant.orderDelivery({
+//     time: '22:30',
+//     address: 'Vidin, 21',
+//     mainIndex: 2,
+//     starterIndex: 1,
+// });
 
-console.log(restaurant);
+// console.log(restaurant);
 
 // 1. ARRAY DESCRUCTURING:
 /*
@@ -353,4 +349,53 @@ SETS - when work with unique values is required, when high performance is import
 OBJECTS - traditional kay-value data structure, easier to write and access values with . and [], when methods are needed, when working with JSON
 
 MAPS - better performance, keys can have any type, easy to iterate, easy to compute size, when you simply need to map keys to values, when you need non string keys
+*/
+
+// 16. WORKING WITH STRINGS
+// - When a method is called on a string JS creates a string object (boxing)
+
+/*
+    const airline = 'TAP Air Portugal';
+    const plane = 'A320';
+
+    console.log(airline.slice(4));
+    console.log(airline.slice(4, 7));
+
+    console.log(airline.slice(0, airline.indexOf(' '))); // first word of a string
+    console.log(airline.slice(airline.lastIndexOf(' ') + 1)); // last word of a string
+
+    const checkMiddleSeat = function (seat) {
+        const s = seat.slice(-1);
+        if (s === 'B' || s === 'E') console.log('You got middle seat');
+    };
+
+    checkMiddleSeat('11A');
+
+    const passanger = 'VEnTsisLav';
+    const passangerLower = passanger.toLowerCase();
+    const passangerFixed =
+        passangerLower[0].toUpperCase() + passangerLower.slice(1);
+    console.log(passangerFixed);
+
+    // -- String.split() String.join() methods
+
+    console.log('a+very+nice+string'.split('+'));
+    console.log('Ventsislav Todorov'.split(' '));
+
+    const [firstName, lastName] = 'Ventsislav Todorov'.split(' ');
+    console.log(firstName, lastName);
+
+    const fullName = ['Mr.', firstName, lastName.toUpperCase()].join(' ');
+    console.log(fullName);
+
+    const capitalizeName = function (name) {
+        return name
+            .split(' ')
+            .map(n => n.toLowerCase()[0].toUpperCase() + n.toLowerCase().slice(1))
+            .join(' ');
+    };
+
+    console.log(capitalizeName('ventsislav plamenov todorov'));
+
+    // -- Other methods - padStart, padEnd, repeat.. etc.
 */
