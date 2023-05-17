@@ -169,7 +169,7 @@ petVoice.call(cat, 'Cat');
 -- Binding some of the arguments to a function is a common pattern called "Partian application"
 -- Using bind() in the event listener callback function, to set 'this keyword'
 */
-
+/*
 const bookEW = book.bind(eurowings); // preset this keyword
 bookEW(5566, 'Plamen Todorov');
 
@@ -205,3 +205,70 @@ function setTaxRate(rate) {
 
 const addDOD = setTaxRate(0.1);
 addDOD(1000);
+*/
+
+// 5. Closures!!!
+/*
+Closures makes it possible the inner functions to remember all the variables whose were defided in the function definition scope, even after the outer function is already executed and removed from the call stack.
+
+Every function has access to the variable envirement of the execution context in which it was created, even after the execution context is gone.
+
+Thansk to closures a function does not lose connection to the variable envirement where it was created.
+
+A closure is a closed-over variable environment of the execution context in which a function was created, even after that execution context is gone!
+
+A closure gives a function access to all the variables of its parent function, even after that parent function has returned. The function keeps a reference to its outer scope, which preserves the scope chain throughout time.
+*/
+const secureBooking = function () {
+    let passengerCount = 0;
+
+    return function () {
+        passengerCount++;
+        console.log(passengerCount);
+    };
+};
+
+const booker = secureBooking();
+const booker2 = secureBooking();
+booker();
+booker();
+
+console.dir(booker);
+console.dir(booker2);
+
+// Closures Example 1:
+
+let f;
+
+const g = function () {
+    const a = 23;
+    f = function () {
+        console.log(a * 2);
+    };
+}; // f function closed over g function VE, even though it is not defined in its scope
+
+const h = function () {
+    const b = 777;
+    f = function () {
+        console.log(b * 2);
+    };
+};
+
+g();
+f();
+h(); // reassign f
+f();
+
+// Closures Example 2 - timer:
+const boardPassengers = function (n, wait) {
+    const perGroup = n / 3;
+
+    setTimeout(function () {
+        console.log(`We are now boarding all ${n} passengers`);
+        console.log(`There are 3 groups, each with ${perGroup} passengers`);
+    }, wait * 1000);
+
+    console.log(`Will start boarding in ${wait} seconds`);
+};
+
+boardPassengers(180, 3);
