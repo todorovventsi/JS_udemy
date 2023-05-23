@@ -61,9 +61,11 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
     containerMovements.innerHTML = '';
-    movements.forEach((mov, i) => {
+
+    const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+    movs.forEach((mov, i) => {
         const type = mov < 0 ? 'withdrawal' : 'deposit';
         const html = `
         <div class="movements__row">
@@ -138,6 +140,24 @@ function updateUI(acc) {
     calcDisplaySummary(acc);
 }
 
+// REQUEST LOAN
+btnLoan.addEventListener('click', handleLoanRequest);
+
+function handleLoanRequest(e) {
+    e.preventDefault();
+    const amount = Number(inputLoanAmount.value);
+
+    if (
+        amount > 0 &&
+        currentAccount.movements.some(mov => mov >= amount * 0.1)
+    ) {
+        currentAccount.movements.push(amount);
+        updateUI(currentAccount);
+    }
+
+    inputLoanAmount.value = '';
+}
+
 // TRANSFER HANLDER
 function handleTransfer(e) {
     e.preventDefault();
@@ -200,6 +220,14 @@ const calcDisplaySummary = function (accout) {
     labelSumIn.textContent = `${income} €`;
     labelSumOut.textContent = `${outcome} €`;
 };
+
+// SORT MOVEMENTS:
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+    e.preventDefault();
+    displayMovements(currentAccount.movements, !sorted);
+    sorted = !sorted;
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -316,6 +344,28 @@ console.log(account);
  */
 
 // 7. .findIndex() method - return the index of the element that satisfies the callback condition
+
+// 8. .some() and .every() methods
+
+/*
+.some() - returns true if some of the array elements satisfies the condition in the callback function
+
+.every() - returns true if every of the array elements satisfies the condition in the callback function
+*/
+
+// 9. .flat() and .flatMap() methods
+
+// 10. Sorting arrays
+/*
+const owners = ['Jonas', 'Zak', 'Adam', 'Martha'];
+console.log(owners.sort()); // mutetes the original array. the default sorting algo is string based (alphabeticly) and will not work properly with numbers. To sort numbers compering callback function is needed
+const nums = [2, 5, 1, 30, -20, 22];
+nums.sort((a, b) => a - b);
+console.log(nums);
+ */
+// 11. More ways of creating and filling arrays
+
+// 12. Which array method to use?
 
 ///////////////////////////////////////
 // Coding Challenge #1
