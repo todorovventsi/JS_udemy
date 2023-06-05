@@ -229,6 +229,12 @@ btnSort.addEventListener('click', function (e) {
     sorted = !sorted;
 });
 
+// const diceRolls = Array.from(
+//     { length: 100 },
+//     () => Math.floor(Math.random() * 6) + 1
+// );
+// console.log(diceRolls);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -366,6 +372,8 @@ console.log(nums);
 // 11. More ways of creating and filling arrays
 
 // 12. Which array method to use?
+
+// 13. Creating arrays - Array.from() method!!!
 
 ///////////////////////////////////////
 // Coding Challenge #1
