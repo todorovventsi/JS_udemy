@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(0)}€</div>
       </div>
     `;
 
@@ -162,7 +162,6 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     // Display UI and message
@@ -206,7 +205,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -251,3 +250,48 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// Base 10: 0-9
+// Binary Base 2: 0 1
+
+// Parsing
+console.log(Number.parseInt('30px', 10)); // parse the string to decimal number 30
+console.log(Number.parseInt('e23', 10)); // doesn't work (NaN)
+console.log(Number.parseInt('0101010', 2)); // parse the binary number
+console.log(Number.parseFloat('2.5rem')); // parse the floating point number
+
+// checks if a value is NaN
+console.log(Number.isNaN('20')); // false
+console.log(Number.isNaN(20)); // false
+console.log(Number.isNaN(20 / 0)); // false
+console.log(Number.isNaN(+'20X')); // true
+
+// checks if a value is number
+console.log(Number.isFinite(20)); // true
+console.log(isFinite('20')); // true (Converts the value to a number before evaluating)
+console.log(Number.isFinite('20')); // false (Does not converts the value to a number before evaluating)
+
+// 1. MATH AND ROUNDING
+
+console.log(Math.sqrt(25)); // 5
+console.log(Math.max(5, 16, '89')); // 89 (Does type converstion, but not parsing)
+console.log(Math.max(5, 16, '89', '100p')); // Nan (Does type converstion, but not parsing)
+
+// Random number between 2 values
+const randomInt = (min, max) =>
+  Math.trunc(Math.random() * (max - min) + 1) + min;
+
+console.log(randomInt(10, 20));
+
+// Rounding integers - all the methods does type conversion
+console.log(Math.trunc(1.21321331)); // 1 (Removes any decilamal part)
+console.log(Math.round(23.3)); // 23 (Rounds to the nearest integer)
+console.log(Math.round(23.9)); // 24 (Rounds to the nearest integer)
+console.log(Math.ceil(23.3)); // 24 (Rounds to the highest integer)
+console.log(Math.floor(23.3)); // 23 (Rounds to the lowest integer)
+
+// Rounding decimals
+console.log((2.3).toFixed(0)); // '2'
+console.log((2.3241414).toFixed(1)); // '2.3'
+console.log((2.3241414).toFixed(2)); // '2.32'
+console.log((2.3).toFixed(3)); // '2.300'
