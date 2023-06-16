@@ -1,7 +1,10 @@
 'use strict';
 
 ///////////////////////////////////////
-// Modal window
+// Selections
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
 
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
@@ -11,6 +14,12 @@ const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 
 const sectionOne = document.querySelector('#section--1');
+
+const nav = document.querySelector('.nav');
+
+const header = document.querySelector('.header');
+
+// Modal window
 
 const openModal = function (e) {
   e.preventDefault();
@@ -45,12 +54,83 @@ document.addEventListener('keydown', function (e) {
 //   })
 // ); // This adds the callback function on each of the elements, better way is to use event delegation on a parent element (AS BELOW)!!!
 
+// linking
 document.querySelector('.nav__links').addEventListener('click', function (e) {
   e.preventDefault();
   if (e.target.classList.contains('btn--show-modal')) return;
   const section = document.querySelector(e.target.getAttribute('href'));
   section.scrollIntoView({ behavior: 'smooth' });
 }); // This delegation strategy applies the callback function at only one place (common parent element)
+
+// manu fade animation
+const handleHover = function (e) {
+  if (!e.target.classList.contains('nav__link')) return;
+
+  const opacity = this; // Just for clarifucation (see the event listener callback!)
+  const link = e.target;
+  const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+  const logo = link.closest('.nav').querySelector('.nav__logo');
+
+  [...siblings, logo].forEach(el => {
+    if (el !== link) el.style.opacity = opacity;
+  });
+};
+
+// sticky navigation
+// option 1 - scroll event on the window object -- BAD PERFORMANCE!!!
+/*
+const coords = sectionOne.getBoundingClientRect().top;
+window.addEventListener('scroll', function (e) {
+  if (this.window.scrollY >= coords) {
+    nav.classList.add('sticky');
+  } else {
+    nav.classList.remove('sticky');
+  }
+});
+*/
+// option 2 - using intersection observer API
+const applyStickyNav = function (entries, observer) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) {
+    nav.classList.add('sticky');
+  } else {
+    nav.classList.remove('sticky');
+  }
+};
+
+const options = {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${nav.getBoundingClientRect().height}px`, // height of the navigation
+};
+
+const headerObserver = new IntersectionObserver(applyStickyNav, options);
+headerObserver.observe(header);
+
+// const handleMouseOver = function (e) {
+//   if (!e.target.classList.contains('nav__link')) return;
+
+//   const link = e.target;
+//   const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//   const logo = link.closest('.nav').querySelector('.nav__logo');
+
+//   [...siblings, logo].forEach(el => {
+//     if (el !== link) el.style.opacity = 0.5;
+//   });
+// };
+
+// const handleMouseOut = function (e) {
+//   if (!e.target.classList.contains('nav__link')) return;
+
+//   const link = e.target;
+//   const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//   const logo = link.closest('.nav').querySelector('.nav__logo');
+
+//   [...siblings, logo].forEach(el => (el.style.opacity = 1));
+// };
+
+nav.addEventListener('mouseover', handleHover.bind(0.5)); // changing the 'this' keywords with the opacity value
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 // SMOOTH SCROLING
 
@@ -76,6 +156,28 @@ btnScrollTo.addEventListener('click', e => {
   sectionOne.scrollIntoView({ behavior: 'smooth' });
 });
 
+///////////////////////////////////////
+// TABBED COMPONENT
+
+const handleOperationsTabChange = function (e) {
+  const clickedTab = e.target.closest('.operations__tab');
+
+  if (!clickedTab) return; // Gueard clause
+
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  clickedTab.classList.add('operations__tab--active');
+
+  // activate the content area:
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+  document
+    .querySelector(`.operations__content--${clickedTab.dataset.tab}`)
+    .classList.add('operations__content--active');
+};
+
+tabsContainer.addEventListener('click', handleOperationsTabChange);
+
+///////////////////////////////////////
+///////////////////////////////////////
 // LECTURES
 
 // 1. HOW THE DOM WORKS:
@@ -91,7 +193,7 @@ btnScrollTo.addEventListener('click', e => {
 
 // 2. SELECTING, CREATING AND DELITING ELEMENTS
 /*
--- node list vs. html collection -> html collection is a so called live collection, meaning that if there is a change on the DOM, this change will affect the collection
+-- node list vs. html collection -> html collection is a so called live collection, meaning that if there is a change on the DOM, this change will affect the collection, node list on the other hand is static and once its stored in a variable it does not change
 */
 
 /*
@@ -127,7 +229,7 @@ console.log(message);
 
 // 4. TYPES OF EVENTS AND EVENT HANDLERS:
 // -- https://developer.mozilla.org/en-US/docs/Web/Events
-// -- An event is a signal generated by a DOM node
+// -- An event is a signal generated by a DOM node - a JS object
 // -- PROS of using 'addEventListener' insted of 'onevent' property:
 //    -> Allows us to add multiple event listeners to the same element;
 //    -> We can remove an event handler if its no more needed
@@ -226,3 +328,20 @@ console.log(h1.closest('.header')); // closest parent element with the specified
 console.log(h1.previousElementSibling);
 console.log(h1.nextElementSibling);
 */
+
+// 7. PASSING ARGUMENTS TO A EVENT HANDLER
+
+// 8. INTERSACTION OBSERVING API - the callback function is called when the target element intersect the root element!!!
+/*
+const observerCallback = function (entries, observer) {
+  entries.forEach(entry => console.log(entry));
+};
+
+const observerOpts = {
+  root: null,
+  threshold: [0, 0.2],
+};
+
+const observer = new IntersectionObserver(observerCallback, observerOpts);
+observer.observe(sectionOne);
+ */
