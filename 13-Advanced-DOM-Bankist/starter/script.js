@@ -13,11 +13,18 @@ const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 
+const sections = document.querySelectorAll('.section');
 const sectionOne = document.querySelector('#section--1');
 
 const nav = document.querySelector('.nav');
 
 const header = document.querySelector('.header');
+
+const images = document.querySelectorAll('.features__img');
+
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
 
 // Modal window
 
@@ -176,6 +183,101 @@ const handleOperationsTabChange = function (e) {
 
 tabsContainer.addEventListener('click', handleOperationsTabChange);
 
+// REVEALING SECTION ON SCROLL
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) return;
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+
+sections.forEach(function (section) {
+  section.classList.add('section--hidden');
+  sectionObserver.observe(section);
+});
+
+// LAZY LOADING IMAGES - optimize perfotmance
+const revealImage = function (entries, observer) {
+  const [entry] = entries;
+  const img = entry.target;
+
+  if (!entry.isIntersecting) return;
+
+  img.src = img.dataset.src;
+  img.addEventListener('load', e => img.classList.remove('lazy-img'));
+  observer.unobserve(img);
+};
+
+const imageObserver = new IntersectionObserver(revealImage, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px',
+});
+
+images.forEach(image => imageObserver.observe(image));
+
+// SLIDER COMPONENT
+let currentSlideNumber = 0;
+const maxSlide = slides.length;
+const minSlide = 0;
+
+const goToSlide = function (slide) {
+  slides.forEach((s, i) => {
+    s.style.transform = `translateX(${(i - slide) * 100}%)`;
+  });
+};
+
+// 1. Moving all the slides side by side
+goToSlide(0);
+
+// 2. Next slide
+const nextSlide = function () {
+  currentSlideNumber =
+    currentSlideNumber === maxSlide - 1 ? 0 : currentSlideNumber + 1;
+
+  goToSlide(currentSlideNumber);
+};
+
+btnRight.addEventListener('click', nextSlide);
+
+// 3. Previeous slide
+const previousSlide = function () {
+  currentSlideNumber =
+    currentSlideNumber === minSlide ? maxSlide - 1 : currentSlideNumber - 1;
+
+  goToSlide(currentSlideNumber);
+};
+
+btnLeft.addEventListener('click', previousSlide);
+// 4. Keyboard events:
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextSlide();
+  if (e.key === 'ArrowLeft') previousSlide();
+});
+
+// 5. Dots slide navigation
+const dotsContainer = document.querySelector('.dots');
+
+const createDots = function (slide) {
+  const dot = document.createElement('button');
+  dot.classList.add('dots__dot');
+  dot.setAttribute('data-slide', slide);
+  return dot;
+};
+
+slides.forEach((_, i) => {
+  dotsContainer.appendChild(createDots(i));
+});
+
+dotsContainer.addEventListener('click', e => {
+  if (!e.target.classList.contains('dots__dot')) return;
+  goToSlide(Number(e.target.dataset.slide));
+});
 ///////////////////////////////////////
 ///////////////////////////////////////
 // LECTURES
