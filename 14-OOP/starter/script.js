@@ -43,7 +43,7 @@ console.log(arr.__proto__ === Array.prototype);
 // Examples:
 // ES6 Classes:
 // class expression
-
+/*
 const PersonCl = class {};
 
 // class declaration
@@ -83,9 +83,11 @@ class PersonClass {
 const jessica = new PersonClass('Jessica Adams', 1995);
 const tommy = new PersonClass('TommyAdams', 1995); // Setter will prevent this name to be assigned to the object
 console.log(jessica.__proto__ === PersonClass.prototype); // true
+*/
 
 // Examples:
 // Getters and setters:
+/*
 const account = {
   owner: 'Ventsi',
   movements: [100, 100, 200, -300],
@@ -104,6 +106,63 @@ account.latest = 50;
 console.log(account.latest);
 
 console.log(jessica.age);
+*/
+
+// Examples:
+
+class Account {
+  // Public fields -- attached to the class instances, not the prototype
+  locale = navigator.language;
+
+  // Private fields -- attached to the class instances, not the prototype
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+
+    // this._movements = []; // Property not based on input || Protected property
+    // this.locale = navigator.language;
+  }
+
+  // Public interface of the class:
+  deposit(value) {
+    this.#movements.push(value);
+  }
+
+  withdrawal(value) {
+    this.#movements.push(-value);
+  }
+
+  requestLoan(value) {
+    if (this.#approveLoan(value)) {
+      this.deposit(value);
+      console.log('Loan APPROVED!');
+    }
+  }
+
+  get movements() {
+    return this.#movements;
+  }
+
+  // Private methods -- used internally in the class
+  #approveLoan(value) {
+    return true;
+  }
+}
+
+const account1 = new Account('Ventsi', 'EUR', 1111);
+
+// Bad way to interact with properties, use methods instead!!!
+// account1.movements.push(250);
+// account1.movements.push(-100);
+account1.deposit(100);
+account1.withdrawal(10);
+account1.requestLoan(1000);
+console.log(account1);
+console.log(account1.movements);
 
 // LECTURES:
 // 1. What is OOP
@@ -173,8 +232,125 @@ console.log(jessica.age);
 // -- Methods that are attached to the construction functions (for example Array.from(), this cannot be used on an instance like [1,2,3].from())
 // -- Static methods are not inherited, because its on the construction function, not on the prototype property
 
-// Coding Challenge #1
+// 10. Object.create() method
+// -- Manually setting the prototype of the object, to any other object we want
+/*
+const PersonProto = {
+  calculateAge() {
+    console.log(2023 - this.birthYear);
+  },
 
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const ivan = Object.create(PersonProto);
+ivan.name = 'Ivan Todorov';
+ivan.birthYear = 2000;
+ivan.calculateAge();
+
+const sarah = Object.create(PersonProto);
+sarah.init('Sarah', 2005);
+sarah.calculateAge();
+*/
+
+// 11. Inheritance between Classes: Constructor functions
+/*
+const Person = function (firstName, brithYear) {
+  this.firstName = firstName;
+  this.brithYear = brithYear;
+};
+
+Person.prototype.calcAge = function () {
+  console.log(2023 - this.brithYear);
+};
+
+const Student = function (firstName, birthYear, course) {
+  Person.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+Student.prototype = Object.create(Person.prototype);
+
+Student.prototype.introduce = function () {
+  console.log(`Hello, I am ${this.firstName} and I study ${this.course}`);
+};
+
+const mike = new Student('Mike', 2002, 'CS');
+mike.introduce();
+mike.calcAge();
+*/
+
+// 12. Inheritance between objects: ES6 Classes syntax:
+/*
+class PersonCl {
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
+    this.birthYear = birthYear;
+  }
+
+  // Instance methods
+  calcAge() {
+    console.log(2023 - this.birthYear);
+  } // All the methods declared in the class body will be attached to the prototype object, and will not be copied to every instance of the class!!!
+
+  get age() {
+    return 2023 - this.birthYear;
+  }
+
+  set fullName(name) {
+    if (name.includes(' ')) {
+      this._fullName = name;
+    } else {
+      alert('Given name not valid!');
+    }
+  }
+
+  get fullName() {
+    return this._fullName;
+  }
+
+  // Static methods
+  static hey() {
+    console.log('hey');
+  }
+}
+
+// 'extends' keyword links the prototypes in the background
+// 'super()' is basically the construction function of the super class
+// if there are no additional properties in the new class, construction function can be dropped
+
+class Student extends PersonCl {
+  constructor(fullName, birthYear, course) {
+    super(fullName, birthYear); // Always must happen first, because the super() is also responsible for setting the 'this' keyword
+    this.course = course;
+  }
+
+  introduce() {
+    console.log(`Hello, I am ${this.fullName} and I study ${this.course}`);
+  }
+
+  calcAge() {
+    console.log('Overridden!');
+  }
+}
+
+const martha = new Student('Martha Jones', 2012, 'CS');
+
+martha.introduce(); // own method
+console.log(martha.fullName); // inherited getter
+martha.calcAge(); // overridden method
+*/
+
+// 12. Inheritance between objects: Object.create():
+
+// 13. Encapsulation
+// -- Preventing code outside the class to accidentally change and manipulate data inside it
+// -- When only the neccesary methods are exposed and make avaibale outside the class (public) we can more confidentally change other methods in the class minimalizing the risk to breaking the code outside the class
+
+// Coding Challenge #1
 /* 
 1. Use a constructor function to implement a Car. A car has a make and a speed property. The speed property is the current speed of the car in km/h;
 2. Implement an 'accelerate' method that will increase the car's speed by 10, and log the new speed to the console;
@@ -207,4 +383,46 @@ carOne.accelerate();
 carOne.accelerate();
 carOne.accelerate();
 carOne.brake();
+*/
+
+// Coding Challenge #2
+/* 
+1. Re-create challenge 1, but this time using an ES6 class;
+2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide by 1.6);
+3. Add a setter called 'speedUS' which sets the current speed in mi/h (but converts it to km/h before storing the value, by multiplying the input by 1.6);
+4. Create a new car and experiment with the accelerate and brake methods, and with the getter and setter.
+
+DATA CAR 1: 'Ford' going at 120 km/h
+
+GOOD LUCK 😀
+*/
+/*
+class CarCl {
+  constructor(model, speed) {
+    this.model = model;
+    this.speed = speed;
+  }
+
+  accelerate() {
+    this.speed += 10;
+    console.log(this.speed);
+  }
+
+  brake() {
+    this.speed -= 5;
+    console.log(this.speed);
+  }
+
+  get speedUS() {
+    console.log(this.speed / 1.6);
+  }
+
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+const bmw = new CarCl('bmw', 90);
+bmw.speedUS = 50;
+bmw.brake();
 */
